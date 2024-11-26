@@ -75,36 +75,23 @@ func (s ParcelStore) SetStatus(number int, status string) error {
 }
 
 func (s ParcelStore) SetAddress(number int, address string) error {
-	var status string
-	row := s.db.QueryRow("SELECT status FROM parcel WHERE number = :number", sql.Named("number", number))
-	err := row.Scan(&status)
+	_, err := s.db.Exec("UPDATE parcel SET address = :address WHERE number = :number AND status = :status",
+		sql.Named("address", address),
+		sql.Named("number", number),
+		sql.Named("status", ParcelStatusRegistered))
 	if err != nil {
 		return err
-	}
-	if status == ParcelStatusRegistered {
-		_, err := s.db.Exec("UPDATE parcel SET address = :address WHERE number = :number", sql.Named("address", address), sql.Named("number", number))
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
 
 func (s ParcelStore) Delete(number int) error {
 
-	var status string
-	row := s.db.QueryRow("SELECT status FROM parcel WHERE number = :number", sql.Named("number", number))
-	err := row.Scan(&status)
+	_, err := s.db.Exec("DELETE FROM parcel WHERE Number = :Number AND Status = :Status",
+		sql.Named("Number", number),
+		sql.Named("Status", "registered"))
 	if err != nil {
 		return err
 	}
-
-	if status == ParcelStatusRegistered {
-		_, err := s.db.Exec("DELETE FROM parcel WHERE number = :number", sql.Named("number", number))
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
