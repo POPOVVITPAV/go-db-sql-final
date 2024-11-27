@@ -89,7 +89,7 @@ func (s ParcelStore) Delete(number int) error {
 
 	_, err := s.db.Exec("DELETE FROM parcel WHERE Number = :Number AND Status = :Status",
 		sql.Named("Number", number),
-		sql.Named("Status", "registered"))
+		sql.Named("Status", ParcelStatusRegistered))
 	if err != nil {
 		return err
 	}
